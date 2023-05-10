@@ -1,4 +1,5 @@
 const fs = require('fs');
+const { rm } = require('node:fs/promises');
 const path = require('path');
 
 const folderPath = path.join(__dirname, 'files');
@@ -8,8 +9,14 @@ const folderNewPath = path.join(__dirname, 'files-copy');
         if (err) throw err;
     });
 
-
-fs.readdir(folderPath, (err, files) => {
+rm(folderNewPath, {
+  recursive: true,
+  force: true,
+}).finally(() => {
+  fs.mkdir(folderNewPath, err => {
+    if (err) throw err;
+  });
+  fs.readdir(folderPath, (err, files) => {
     if (err) {
         console.error('Произошла ошибка при чтении папки:', err);
         return;
@@ -34,4 +41,6 @@ fs.readdir(folderPath, (err, files) => {
           };
         });
     });
+  });
 });
+
